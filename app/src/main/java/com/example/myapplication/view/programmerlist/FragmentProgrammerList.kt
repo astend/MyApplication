@@ -27,9 +27,14 @@ class FragmentProgrammerList: Fragment() {
 
     viewModel.programmers.observe(viewLifecycleOwner,
       Observer { list ->
+        pbProgrammers.visibility = View.GONE
+
+        if (list == null) return@Observer
+
         adapter.updateList(list)
       })
 
+    pbProgrammers.visibility = View.VISIBLE
     viewModel.mockLoadProgrammers()
   }
 

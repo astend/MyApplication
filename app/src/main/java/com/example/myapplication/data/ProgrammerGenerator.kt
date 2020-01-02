@@ -1,6 +1,8 @@
 package com.example.myapplication.data
 
 import com.example.myapplication.model.Programmer
+import com.example.myapplication.model.ProgrammingLanguage
+import kotlin.random.Random
 
 /**
  * Created on 02.01.20.
@@ -58,10 +60,40 @@ object ProgrammerGenerator {
     val names = generateNames(count)
     val programmerList = mutableListOf<Programmer>()
 
+    val random = Random(System.currentTimeMillis())
+
     names.forEach {
-      programmerList.add(Programmer(it))
+      val age = random.nextInt(18, 50)
+      val maxSkillCount = age / 10 + 1
+      val skillsCount = random.nextInt(1, maxSkillCount)
+      val programmer = Programmer(it, age, generateSkills(skillsCount))
+
+      if (random.nextBoolean())
+        programmer.phoneNumber = generatePhoneNumber(random)
+
+      programmerList.add(programmer)
     }
 
     return programmerList
+  }
+
+  private fun generateSkills(count: Int): List<ProgrammingLanguage> {
+    val skills = mutableListOf<ProgrammingLanguage>()
+    if (count < 1)
+      return skills
+
+    val progLangs = ProgrammingLanguage.values().toList().shuffled()
+
+    for (i in 0 until count)
+      skills.add(progLangs[i])
+
+    return skills
+  }
+
+  private fun generatePhoneNumber(random: Random):String {
+    var phone = "+380"
+    for (i in 0 until 9)
+      phone += random.nextInt(0, 10).toString()
+    return phone
   }
 }

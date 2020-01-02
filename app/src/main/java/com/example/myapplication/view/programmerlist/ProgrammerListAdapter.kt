@@ -1,41 +1,51 @@
 package com.example.myapplication.view.programmerlist
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
+import com.example.myapplication.databinding.ItemProgrammerInfoBinding
+import com.example.myapplication.databinding.ItemProgrammerPhoneBinding
 import com.example.myapplication.model.Programmer
 
 /**
  * Created on 02.01.20.
  */
-class ProgrammerListAdapter: RecyclerView.Adapter<ProgrammerListAdapter.ViewHolder>() {
+class ProgrammerListAdapter : RecyclerView.Adapter<ProgrammerListAdapter.ProgrammerHolder>() {
 
   private var programmers = listOf<Programmer>()
 
-  class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-    val age: TextView = itemView.findViewById(R.id.tvAge)
-    val name: TextView = itemView.findViewById(R.id.tvName)
-    val skills: TextView = itemView.findViewById(R.id.tvSkills)
+  class ProgrammerHolder(val binding: ItemProgrammerInfoBinding) :
+    RecyclerView.ViewHolder(binding.root) {
+
+    fun bind(programmer: Programmer) {
+      binding.programmer = programmer
+      binding.vsPhoneNumber.setOnInflateListener { stub, inflated ->
+        val programmerPhoneBinding: ItemProgrammerPhoneBinding = DataBindingUtil.bind(inflated)!!
+        programmerPhoneBinding.programmer = programmer
+      }
+      binding.executePendingBindings()
+    }
   }
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-    val itemView =
-      LayoutInflater.from(parent.context).inflate(R.layout.item_programmer_info, parent, false)
-    return ViewHolder(itemView)
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgrammerHolder {
+    val inflater = LayoutInflater.from(parent.context)
+    val binding: ItemProgrammerInfoBinding =
+      DataBindingUtil.inflate(inflater, R.layout.item_programmer_info, parent, false)
+    return ProgrammerHolder(binding)
   }
 
   override fun getItemCount(): Int {
     return programmers.size
   }
 
-  override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+  override fun onBindViewHolder(holder: ProgrammerHolder, position: Int) {
     val programmer = programmers[position]
-    holder.name.text = programmer.name
-    holder.age.text = programmer.age.toString()
-    holder.skills.text = programmer.skillsToString()
+    holder.bind(programmer)
+
+    if (programmer.phoneNumber != null && !holder.binding.vsPhoneNumber.isInflated)
+      holder.binding.vsPhoneNumber.viewStub?.inflate()
   }
 
   fun updateList(programmers: List<Programmer>) {

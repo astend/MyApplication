@@ -11,6 +11,7 @@ class Programmer {
     private set
   var skills: List<ProgrammingLanguage> = listOf()
     private set
+  var phoneNumber: String? = null
 
   constructor(name: String) {
     this.name = name
@@ -25,7 +26,7 @@ class Programmer {
   }
 
   fun skillsToString(): String {
-    return if (skills.isEmpty()) "Don't have skills"
+    return if (skills.isEmpty()) ""
     else {
       val skillsText = StringBuilder()
       skills.forEach { skillsText.append(it.langName).append(", ") }

@@ -11,15 +11,18 @@ import java.util.concurrent.TimeUnit
 
 class FragmentProgrammerListVM : BaseViewModel() {
 
-  val programmers: MutableLiveData<List<Programmer>> = MutableLiveData(listOf())
+  val programmers: MutableLiveData<List<Programmer>?> = MutableLiveData()
 
   fun mockLoadProgrammers() {
     disposable.add(
-      Observable.timer(1200, TimeUnit.MILLISECONDS)
+      Observable.timer(2200, TimeUnit.MILLISECONDS)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe(
           { programmers.value = ProgrammerGenerator.generateProgrammers(10) },
-          { Log.e("TAG", "ERROR", it) }
+          {
+            Log.e("TAG", "ERROR", it)
+            programmers.value = null
+          }
         )
     )
   }
